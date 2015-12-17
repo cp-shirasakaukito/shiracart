@@ -3,19 +3,20 @@
  * Created by PhpStorm.
  * User: ukito
  * Date: 15/12/17
- * Time: 0:52
+ * Time: 23:28
  */
+
 require_once("database.php");
-class Creditcard_payment_log extends Database
+class Purchase_detail extends Database
 {
-    /* レコードをクレジットカード決済履歴テーブルに追加する
+    /* レコードを購入明細テーブルに追加する
      * レコードを投げると登録され、登録レコードのIDを返す
      * エラーの場合はfalseを返す
      * */
-    public function add_creditcard_payment_log($record=array())
+    public function add_purchase_detail($record=array())
     {
         foreach ($record as $header => &$value) {
-            if(!$this->is_valid_creditcard_payment_log($record)){
+            if(!$this->is_valid_purchase_detail($record)){
                 return false;
             }
             //varchar形式のカラム名を配列にいれる
@@ -26,16 +27,16 @@ class Creditcard_payment_log extends Database
             }
         }
         unset($value);
-        return $this->add("creditcard_payment_log", $record);
+        return $this->add("purchase_detail", $record);
     }
 
     /*レコードを投げて無効なデータの場合false,有効なデータの場合
      * */
-    public function is_valid_creditcard_payment_log($record=array()){
+    public function is_valid_purchase_detail($record=array()){
         //foreachでまわしてそれぞれのバリデーションチェック
         foreach($record as $header => $value){
             //switchでカラムごとに分岐
-            switch($header){
+            switch($header) {
                 default:
                     break;
             }
@@ -45,7 +46,7 @@ class Creditcard_payment_log extends Database
 
     /*レコードを投げるとバリデーション結果が連想配列(カラム名=>エラーメッセージ）で返る
      * */
-    public function get_error_message_creditcard_payment_log($record=array()){
+    public function get_error_message_purchase_detail($record=array()){
         $error_message = array();
         //foreachでまわしてそれぞれのバリデーションチェック
         foreach($record as $header => $value){
@@ -56,6 +57,6 @@ class Creditcard_payment_log extends Database
         }
         return $error_message;
     }
-
 }
+
 ?>
