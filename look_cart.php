@@ -5,11 +5,11 @@
  * Date: 15/11/05
  * Time: 1:06
  */
-require_once("database/item.php");
+require_once(dirname(__FILE__)."/database/item.php");
 session_start();
 $db = new Item();
-$item = $db->select_all_item();
-var_dump($item);
+$link = $db->connect();
+$item = $db->select_all_item($link);
 ?>
 <!doctype html>
 <html lang="ja">

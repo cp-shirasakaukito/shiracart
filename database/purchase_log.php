@@ -12,7 +12,7 @@ class Purchase_log extends Database
      * レコードを投げると登録され、登録レコードのIDを返す
      * エラーの場合はfalseを返す
      * */
-    public function add_purchase_log($record=array())
+    public function add_purchase_log($link,$record=array())
     {
         foreach ($record as $header => &$value) {
             if(!$this->is_valid_purchase_log($record)){
@@ -26,7 +26,7 @@ class Purchase_log extends Database
             }
         }
         unset($value);
-        return $this->add("purchase_log", $record);
+        return $this->add($link,"purchase_log", $record);
     }
 
     /*レコードを投げて無効なデータの場合false,有効なデータの場合

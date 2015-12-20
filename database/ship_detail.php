@@ -12,7 +12,7 @@ class Ship_detail extends Database
      * レコードを投げると登録され、登録レコードのIDを返す
      * エラーの場合はfalseを返す
      * */
-    public function add_ship_detail($record=array())
+    public function add_ship_detail($link,$record=array())
     {
         foreach ($record as $header => &$value) {
             if(!$this->is_valid_ship_detail($record)){
@@ -26,7 +26,7 @@ class Ship_detail extends Database
             }
         }
         unset($value);
-        return $this->add("ship_detail", $record);
+        return $this->add($link,"ship_detail", $record);
     }
 
 

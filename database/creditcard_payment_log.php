@@ -12,7 +12,7 @@ class Creditcard_payment_log extends Database
      * レコードを投げると登録され、登録レコードのIDを返す
      * エラーの場合はfalseを返す
      * */
-    public function add_creditcard_payment_log($record=array())
+    public function add_creditcard_payment_log($link,$record=array())
     {
         foreach ($record as $header => &$value) {
             if(!$this->is_valid_creditcard_payment_log($record)){
@@ -26,7 +26,7 @@ class Creditcard_payment_log extends Database
             }
         }
         unset($value);
-        return $this->add("creditcard_payment_log", $record);
+        return $this->add($link,"creditcard_payment_log", $record);
     }
 
     /*レコードを投げて無効なデータの場合false,有効なデータの場合

@@ -5,12 +5,13 @@
  * Date: 15/11/04
  * Time: 0:57
  */
-require_once("database/item.php");
+require_once(dirname(__FILE__)."/database/item.php");
 session_start();
 
 //商品一覧を取得
 $db = new Item();
-$item = $db->select_all_item();
+$link = $db->connect();
+$item = $db->select_all_item($link);
 $cart = $_SESSION["cart"];
 
 if($_POST) {
@@ -35,9 +36,6 @@ if($_POST) {
     }
     header("location: look_cart.php");
 }
-
-
-var_dump($_SESSION);
 ?>
 <!doctype html>
 <html lang="ja">

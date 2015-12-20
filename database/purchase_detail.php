@@ -13,7 +13,7 @@ class Purchase_detail extends Database
      * レコードを投げると登録され、登録レコードのIDを返す
      * エラーの場合はfalseを返す
      * */
-    public function add_purchase_detail($record=array())
+    public function add_purchase_detail($link,$record=array())
     {
         foreach ($record as $header => &$value) {
             if(!$this->is_valid_purchase_detail($record)){
@@ -27,7 +27,7 @@ class Purchase_detail extends Database
             }
         }
         unset($value);
-        return $this->add("purchase_detail", $record);
+        return $this->add($link,"purchase_detail", $record);
     }
 
     /*レコードを投げて無効なデータの場合false,有効なデータの場合

@@ -6,19 +6,19 @@
  * Date: 15/11/16
  * Time: 23:38
  */
-require_once("database.php");
+require_once(dirname(__FILE__)."/database.php");
 class Item extends Database
 {
-    public function select_all_item(){
-        $result = $this->select_all("item");
+    public function select_all_item($link){
+        $result = $this->select_all($link,"item");
         return $result;
     }
 
-    /*
+    /*$
      * レコードを入力して、商品を追加
      * 追加に成功したらtrue 失敗したらfalseを返す
      * */
-    public function add_item($record=array()) {
+    public function add_item($link,$record=array()) {
         //有効な値かをチェック
         if(!$this->is_valid_item($record)) {
             return false;
@@ -30,7 +30,7 @@ class Item extends Database
             }
         }
         unset($value);
-        return $this->add("item",$record);
+        return $this->add($link,"item",$record);
     }
 
     /*レコードを投げて無効なデータの場合false,有効なデータの場合
@@ -115,7 +115,7 @@ class Item extends Database
                 "message" => "金額は数字で入力して下さい"
             ),
             array(
-                "rule" => array("number_range",1,30),
+                "rule" => array("number_range",1),
                 "message" => "金額は1円以上で入力して下さい"
             )
         );

@@ -13,12 +13,16 @@ if($_POST){
         "name" => $_POST["name"],
         "price" => $_POST["price"]
     );
-    $db = new Item();
-    if($db->add_item($record)) {
+    $connect = new Database();
+    $link = $connect->connect();
+    $connect->begin_transaction($link);
+    $item = new Item();
+    if($item->add_item($link,$record)) {
         $success = "登録に成功しました";
     } else {
-        $error = $db->get_error_message_item($record);
+        $error = $item->get_error_message_item($record);
     }
+    $connect->commit($link);
 }
 ?>
 <!doctype html>

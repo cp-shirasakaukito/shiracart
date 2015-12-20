@@ -12,7 +12,7 @@ class Member extends Database
      * レコードを投げると登録され、登録レコードのIDを返す
      * エラーの場合はfalseを返す
      * */
-    public function add_member($record=array()){
+    public function add_member($link,$record=array()){
         if (!$this->is_valid_member($record)){
             return false;
         }
@@ -25,7 +25,7 @@ class Member extends Database
             }
         }
         unset($value);
-        return $this->add("member",$record);
+        return $this->add($link,"member",$record);
     }
 
     /*レコードを投げて無効なデータの場合false,有効なデータの場合
