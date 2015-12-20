@@ -59,7 +59,7 @@ class Validation {
     /*文字数チェック
      * */
     private function between($input,$min = PHP_INT_MIN,$max = PHP_INT_MAX){
-        $length = strlen($input);
+        $length = mb_strlen($input);
         if($length < $min || $length > $max){
             return false;
         } else {
