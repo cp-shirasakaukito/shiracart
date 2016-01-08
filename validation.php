@@ -86,7 +86,7 @@ class Validation {
     /*e-mail形式チェック
      * */
     private function email($input) {
-        if (preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $input)) {
+        if (preg_match('/^[\w\+\.]+@[\w\.-]+\.\w{2,}$/', $input)) {
             return true;
         } else {
             return false;
@@ -96,7 +96,7 @@ class Validation {
     /*半角英数チェック
      * */
     private function alphanumericsymbol($input) {
-        if (preg_match('^[a-zA-Z0-9!-/:-@¥[-`{-~]+$', $input)) {
+        if (preg_match('/^[ -~]+$/', $input)) {
             return true;
         } else {
             return false;

@@ -5,75 +5,136 @@
  * Date: 15/11/22
  * Time: 11:38
  */
-require_once("member.php");
-require_once("ship_detail.php");
+include("core.php");
+require_once("database/member.php");
+require_once("database/ship_detail.php");
+require_once("database/join_token.php");
+
+//すでにログイン時にはトップページに遷移
+if($_SESSION["member"]) {
+    header("Location:".DOMAIN."/cookie_cart.php");
+}
+
+$db = new Database();
+$connect = $db->connect();
+
+if($_GET["token"]) {
+    $join_token = new Join_token();
+    $match_token = $join_token->and_search_join_token($connect,array("join_token"=>$_GET["token"],"type"=>0));
+    if($match_token){
+        if(strtotime($match_token[0]["expire_date"]) > strtotime("now")){
+            $member = new Member();
+            $match_member = $member->and_search_member($connect,array("email_address"=>$match_token[0]["email"]));
+            if($match_member){
+                exit("こちらのメールアドレスはすでに登録済みです");
+            }
+        } else {
+            exit("有効期限が切れています");
+        }
+    } else {
+        header("Location:".DOMAIN."/cookie_cart.php");
+    }
+} else {
+    header("Location:".DOMAIN."/cookie_cart.php");
+}
+
+
 if($_POST){
     //ユニークなランダム文字列のcodを作成
     //※※※※※※※※※※※※※※※※会員登録だけ成功するケースが生じる。
     $cod = md5(uniqid(rand(), true));
 
-    $record = array(
+    $member_record = array(
         "cod" => $cod,
         "type" => "1",
         "name" => htmlspecialchars($_POST["name"],ENT_QUOTES,"UTF-8"),
         "email_address" => htmlspecialchars($_POST["email_address"],ENT_QUOTES,"UTF-8"),
         "password" => htmlspecialchars($_POST["password"],ENT_QUOTES,"UTF-8")
     );
+
+    $db->begin_transaction($connect);
+
     $db_member = new Member();
-    if($member_id = $db_member->add_member($record)) {
-        $record = array(
-            "member_id" => $member_id,
-            "zipcode" => htmlspecialchars($_POST["zipcode"],ENT_QUOTES,"UTF-8"),
-            "prefecture" => htmlspecialchars($_POST["prefecture"],ENT_QUOTES,"UTF-8"),
-            "address_1" => htmlspecialchars($_POST["address_1"],ENT_QUOTES,"UTF-8"),
-            "address_2" => htmlspecialchars($_POST["address_2"],ENT_QUOTES,"UTF-8"),
-            "name" => htmlspecialchars($_POST["name"],ENT_QUOTES,"UTF-8"),
-        );
-        $db_ship_detail = new Ship_detail();
-        if ($db_ship_detail->add_ship_detail($record)) {
-            $success = "登録に成功しました。";
-        }else {
-            $error = $db_ship_detail->get_error_message_ship_detail($record);
+    $member_id = $db_member->add_member($connect,$member_record);
+
+    $ship_detail_record = array(
+        "member_id" => $member_id,
+        "zipcode" => htmlspecialchars($_POST["zipcode"],ENT_QUOTES,"UTF-8"),
+        "prefecture" => htmlspecialchars($_POST["prefecture"],ENT_QUOTES,"UTF-8"),
+        "address_1" => htmlspecialchars($_POST["address_1"],ENT_QUOTES,"UTF-8"),
+        "address_2" => htmlspecialchars($_POST["address_2"],ENT_QUOTES,"UTF-8"),
+        "name" => htmlspecialchars($_POST["name"],ENT_QUOTES,"UTF-8"),
+    );
+
+    $db_ship_detail = new Ship_detail();
+    $ship_detail_id = $db_ship_detail->add_ship_detail($connect,$ship_detail_record);
+
+
+    if(!$member_id || !$ship_detail_id){
+        if(!$member_id) {
+            $err_msgs = $db_member->get_error_message_member($member_record);
         }
+        if (!$ship_detail_id) {
+            $err_msgs = array_merge($err_msgs, $db_ship_detail->get_error_message_ship_detail($ship_detail_record));
+        }
+        $db->rollback($connect);
     } else {
-        $error = $db_member->get_error_message_member($record);
+        $success = "登録が完了しました。";
+        $db->commit($connect);
     }
-
-
-
 }
 ?>
+
+
 <!doctype html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>会員登録</title>
+    <link rel=stylesheet type="text/css" href="css/core.css">
+    <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.js"></script>
+    <script type="text/javascript" src="js/register.js"></script>
 </head>
 <body>
-<?php
-if (!empty($error)){
-    echo "<section class='error'>";
-    foreach ($error as $value){
-        echo "<p>".$value."</p>";
-    }
-    echo "</section>";
-}
-if ($success){
-    echo "<section class='success'>".$success."</section>";
-}
-?>
-    <div>
-        <p>
-            会員情報を入力して下さい。
-        </p>
-        <form action="register.php" method="post">
-            <ul>
-                <li>氏名<input type="text" name="name"></li>
-                <li>メールアドレス<input type="text" name="email_address"></li>
-                <li>パスワード<input type="password" name="password"></li>
-                <li>郵便番号<input type="text" name="zipcode"></li>
-                <li>都道府県
-                    <select name="prefecture">
+<?php include("global_menu.php"); ?>
+    <div id="contents" class="container">
+        <form action="" method="post" id="register">
+            <fieldset>
+                <legend class="form_title">会員情報を入力して下さい</legend>
+                <?php
+                if (!empty($err_msgs)){
+                    foreach ($err_msgs as $value){
+                        echo "<p class='error'>".$value."</p>";
+                    }
+                }
+                if ($success){
+                    echo "<section class='success'>".$success."</section>";
+                }
+                ?>
+                <p>
+                    <label for="name">氏名</label>
+                    <input type="name" name="name" id="name">
+                </p>
+                <p>
+                    <label for="email_address">メールアドレス：</label>
+                    <input type="hidden" name="email_address" id="email_address" value="<?php echo $match_token[0]["email"]; ?>">
+                    <?php echo $match_token[0]["email"]; ?>
+                </p>
+                <p>
+                    <label for="password">パスワード</label>
+                    <input type="password" name="password" id="password">
+                </p>
+                <p>
+                    <label for="conf_password">確認用パスワード</label>
+                    <input type="password" name="conf_password" id="conf_password">
+                </p>
+                <p>
+                    <label for="zipcode">郵便番号</label>
+                    <input type="zipcode" name="zipcode" id="zipcode">
+                </p>
+                <p><label for="prefecture">都道府県</label>
+                    <select name="prefecture" id="prefecture">
                         <option value="" selected>都道府県
                         <option value="1">北海道
                         <option value="2">青森県
@@ -123,11 +184,19 @@ if ($success){
                         <option value="46">鹿児島県
                         <option value="47">沖縄県
                     </select>
-                </li>
-                <li>住所１<input type="text" name="address_1"></li>
-                <li>住所２<input type="text" name="address_2"></li>
-                <li><input type="submit" value="送信"></li>
-            </ul>
+                </p>
+                <p>
+                    <label for="address_1">住所１</label>
+                    <input type="text" name="address_1" id="address_1">
+                </p>
+                <p>
+                    <label for="address_2">住所２</label>
+                    <input type="text" name="address_2" id="address_2">
+                </p>
+                <p>
+                    <input type="submit" value="送信">
+                </p>
+            </fieldset>
         </form>
     </div>
 </body>

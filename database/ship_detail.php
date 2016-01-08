@@ -144,7 +144,7 @@ class Ship_detail extends Database
     private function validate_address_2($value){
         $rules = array(
             array(
-                "rule" => array("between",255),
+                "rule" => array("between",1,255),
                 "message" => "住所２は255文字以下で入力して下さい"
             )
         );

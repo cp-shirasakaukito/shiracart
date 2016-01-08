@@ -28,6 +28,12 @@ class Member extends Database
         return $this->add($link,"member",$record);
     }
 
+    /*検索条件を連想配列で投げるとマッチングしたレコードが連想配列で返る
+         * */
+    public function and_search_member($link,$conditions){
+        return $this->and_search($link,"member",$conditions);
+    }
+
     /*レコードを投げて無効なデータの場合false,有効なデータの場合
 * */
     public function is_valid_member($record=array()){

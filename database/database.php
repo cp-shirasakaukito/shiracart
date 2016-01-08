@@ -14,8 +14,6 @@ class Database extends Validation {
     const DATABASE = "cart";
 
     public function __construct(){
-        //php.iniのタイムゾーンをいじっても変わらなかったので・・・(core.phpなんかのもっと上流の共通クラスを作ったらそっちへ移動）
-        date_default_timezone_set("Asia/Tokyo");
     }
 
     public function __destruct(){
@@ -54,6 +52,26 @@ class Database extends Validation {
     //テーブル内のすべてのレコードを返します。
     protected function select_all($link,$table) {
         $query = "SELECT * FROM " .$table;
+        $result = $link->query($query);
+        $result_array = $result->fetch_all(MYSQLI_ASSOC);
+        return $result_array;
+    }
+
+    //テーブル内のマッチングしたレコードを返します。失敗した場合はfalseを返す
+    //$conditionsには検索条件の連想配列を渡す
+    public function and_search($link,$table,$conditions){
+        $query = "SELECT * FROM " .$table." WHERE ";
+        foreach($conditions as $key => $value){
+            //多重配列によるINでの絞込は一旦非対応
+            if(is_string($value)){
+                $query .= $key." = '".$value."'";
+            } else {
+                $query .= $key." = ".$value;
+            }
+            if($value !== end($conditions)){
+                $query .= " AND ";
+            }
+        }
         $result = $link->query($query);
         $result_array = $result->fetch_all(MYSQLI_ASSOC);
         return $result_array;

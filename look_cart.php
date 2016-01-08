@@ -16,8 +16,10 @@ $item = $db->select_all_item($link);
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <link rel=stylesheet type="text/css" href="css/core.css">
 </head>
 <body>
+<?php include("global_menu.php"); ?>
 <?php
 if($_SESSION['cart']){
     $total = 0;

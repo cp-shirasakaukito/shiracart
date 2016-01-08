@@ -5,7 +5,15 @@
  * Date: 15/11/11
  * Time: 0:38
  */
-session_start();
+include("core.php");
+require_once("./database/item.php");
+require_once("./database/member.php");
+require_once("./database/ship_detail.php");
+require_once("./database/purchase_detail.php");
+require_once("./database/purchase_log.php");
+require_once("./database/creditcard_payment_log.php");
+
+
 //SSLでの決済はTLS1.1以上に対応するためにMAMPのPHPを再コンパイルする必要があり面倒なので断念orz
 $url = "http://credit2.j-payment.co.jp/gateway/gateway.aspx";
 if (isset($_POST["cn"])){
@@ -46,7 +54,14 @@ if (isset($_POST["cn"])){
     ];
     //結果に応じて処理を分岐
     if ($result["rst"] === 1) {
+        $db = new Database();
+        $connect = $db->connect();
+        //セッションから購入明細情報を取得
+        $item = new Item();
+        $purchased_items = $_SESSION["cart"];
+
         //購入履歴をDBに保存する
+
 
         //決済結果をDBに保存する
 
@@ -66,8 +81,10 @@ if (isset($_POST["cn"])){
 <head>
     <meta charset="UTF-8">
     <title>クレジットカード情報入力ページ</title>
+    <link rel=stylesheet type="text/css" href="css/core.css">
 </head>
 <body>
+<?php include("global_menu.php"); ?>
 <?php
 
 //決済エラー時の表示処理

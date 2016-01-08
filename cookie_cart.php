@@ -5,8 +5,9 @@
  * Date: 15/11/04
  * Time: 0:57
  */
+include("core.php");
 require_once(dirname(__FILE__)."/database/item.php");
-session_start();
+
 
 //商品一覧を取得
 $db = new Item();
@@ -42,8 +43,10 @@ if($_POST) {
 <head>
     <meta charset="UTF-8">
     <title>クッキーの店</title>
+    <link rel=stylesheet type="text/css" href="css/core.css">
 </head>
 <body>
+<?php include("global_menu.php"); ?>
 <?php
 if ($_POST) {
     echo "<div class='notice'>カートに" . $item[$_POST['cookie_id']]['name'] . "を" . $_POST['number'] . "個追加しました</div>";
