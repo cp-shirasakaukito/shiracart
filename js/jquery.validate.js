@@ -1364,7 +1364,36 @@ $.extend( $.validator, {
 		// 半角英数字記号であることをチェック
 		alphanumericsymbol: function(value,element){
 			return this.optional( element ) || /^[ -~]+$/.test( value );
+		},
+
+		// 白坂追記2016/01/11
+		// クレジットカード形式であることをチェック
+		//http://card.kinri.jp/katsuyou/card-number.html
+		credit_card: function(value,element) {
+			var digit = value.split("");
+			var man_digit = [];
+			var total = 0;
+			digit.forEach(function(value,key){
+				value = parseInt(value);
+				if(key % 2 == 0) {
+					man_digit.push(value);
+					total += value;
+				} else {
+					man_digit.push(value * 2);
+					if(value*2 >=10){
+						var tens_digit = 1;
+						var ones_digit = value * 2 % 10;
+						total += tens_digit + ones_digit;
+					} else {
+						total += value * 2;
+					}
+				}
+			});
+			return this.optional( element ) || total % 10 == 0;
 		}
+
+
+
 	}
 
 });

@@ -11,9 +11,4 @@
 define("DOMAIN","http://local.study/session_cart");
 define("CART_NAME","シラサカート");
 session_start();
-
 //未定義
-class core
-{
-
-}

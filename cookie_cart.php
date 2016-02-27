@@ -57,7 +57,7 @@ foreach($item as $key => $value) {
         echo "<section>";
             echo $value["name"] . ":" . $value["price"] . "円";
             echo "<form action='' method='post'>";
-                echo "<input type='hidden' name='cookie_id' value='" . $key . "'>";
+                echo "<input type='hidden' name='cookie_id' value='" . $value['id'] . "'>";
                 echo "<select name='number'>";
                     for ($i=1;$i <= 10; $i++){
                         echo"<option value=" . $i . ">" . $i . "個</option>";

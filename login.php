@@ -18,6 +18,7 @@ if ($_POST){
         $_SESSION["member"]["email"] = $_POST["email"];
         $_SESSION["member"]["password"] = $_POST["password"];
         $_SESSION["member"]["name"] = $login_info[0]["name"];
+        $_SESSION["member"]["id"] = $login_info[0]["id"];
     } else {
         $err_msg = "メールアドレスもしくはパスワードが誤っております。";
     }

@@ -18,6 +18,7 @@ if($_SESSION["member"]) {
 $db = new Database();
 $connect = $db->connect();
 
+//登録権限があるかを確認する
 if($_GET["token"]) {
     $join_token = new Join_token();
     $match_token = $join_token->and_search_join_token($connect,array("join_token"=>$_GET["token"],"type"=>0));
@@ -40,8 +41,7 @@ if($_GET["token"]) {
 
 
 if($_POST){
-    //ユニークなランダム文字列のcodを作成
-    //※※※※※※※※※※※※※※※※会員登録だけ成功するケースが生じる。
+    //会員情報、配送情報を登録する
     $cod = md5(uniqid(rand(), true));
 
     $member_record = array(
@@ -55,6 +55,7 @@ if($_POST){
     $db->begin_transaction($connect);
 
     $db_member = new Member();
+
     $member_id = $db_member->add_member($connect,$member_record);
 
     $ship_detail_record = array(
@@ -70,6 +71,7 @@ if($_POST){
     $ship_detail_id = $db_ship_detail->add_ship_detail($connect,$ship_detail_record);
 
 
+    $err_msgs = array();
     if(!$member_id || !$ship_detail_id){
         if(!$member_id) {
             $err_msgs = $db_member->get_error_message_member($member_record);

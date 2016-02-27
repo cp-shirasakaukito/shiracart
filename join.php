@@ -9,7 +9,6 @@ session_start();
 include("core.php");
 require_once("database/member.php");
 require_once("database/join_token.php");
-require_once("only_check_form.php");
 
 
 //すでにログイン時にはトップページに遷移

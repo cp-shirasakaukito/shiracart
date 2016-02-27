@@ -29,6 +29,11 @@ class Ship_detail extends Database
         return $this->add($link,"ship_detail", $record);
     }
 
+    /*検索条件を連想配列で投げるとマッチングしたレコードが連想配列で返る
+         * */
+    public function and_search_ship_detail($link,$conditions){
+        return $this->and_search($link,"ship_detail",$conditions);
+    }
 
     /*レコードを投げて無効なデータの場合false,有効なデータの場合
      * */
